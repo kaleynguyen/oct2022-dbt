@@ -56,4 +56,4 @@ SELECT AVG(cnt_session) FROM (
   GROUP BY 1
 ) a
 ```
-On average, we have 16.3 unique sessions we have per hour. 
+On average, we have 16.3 unique sessions per hour. 
