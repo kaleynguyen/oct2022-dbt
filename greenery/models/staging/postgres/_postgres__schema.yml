@@ -1,0 +1,52 @@
+version: 2
+
+models:
+  - name: stg_users
+    description: Demo about each user. 
+    columns: 
+      - name: user_id
+        tests:
+          - not_null
+          - unique
+  - name: stg_addresses
+    description: Info about each user's address. 
+    columns: 
+      - name: address_id
+        tests:
+          - not_null
+          - unique
+  - name: stg_events
+    description: Info about each user's events. 
+    columns: 
+      - name: event_id
+        tests:
+          - not_null
+          - unique
+  - name: stg_orders
+    description: Info about each user's orders. 
+    columns: 
+      - name: order_id
+        tests:
+          - not_null
+          - unique
+  - name: stg_products
+    description: Info about each user's products. 
+    columns: 
+      - name: product_id
+        tests:
+          - not_null
+          - unique
+  - name: stg_order_items
+    description: Info about each user's order items. 
+    columns: 
+      - name: order_id
+        tests:
+          - not_null
+          #- unique supposed to be tested OK since order_id is the primary key
+  - name: stg_promos
+    description: Info about each user's promos. 
+    columns: 
+      - name: promo_id
+        tests:
+          - not_null
+          - unique

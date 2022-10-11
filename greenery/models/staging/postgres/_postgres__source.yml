@@ -1,0 +1,29 @@
+version: 2
+
+sources:
+  - name: greenery # name of the source (this can be named whatever you want, but should be descriptive.)
+    database: raw # this is the name of our database
+    schema: public # this is the schema our raw data lives in
+    
+
+    quoting:
+      database: false
+      schema: false
+      identifier: false
+
+    freshness:
+      warn_after: {count: 24, period: hour}
+      error_after: {count: 48, period: hour}
+
+    tables:
+      - name: users 
+        loaded_at_field: created_at
+
+      - name: events
+        loaded_at_field: created_at
+      - name: products
+      - name: addresses
+      - name: orders
+        loaded_at_field: created_at
+      - name: order_items
+      - name: promos
