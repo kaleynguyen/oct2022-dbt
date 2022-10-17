@@ -1,0 +1,11 @@
+#product
+version: 2
+
+models:
+  #product
+  - name: int_event_types
+    description: int model to transfrom the event type column
+  - name: fact_event_users
+    description: fact model about the user's oldest session, newest session, 
+                  total package shipped, total page view, total add to cart, total checkout,
+                  and order total 

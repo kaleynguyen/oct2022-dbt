@@ -10,8 +10,8 @@ models:
           - not_null
           - unique
     
-  - name: fact_products
-    description: transactional product info. 
+  - name: dim_products
+    description: product info. 
    
   - name: fact_orders
     description: Info about the transactional data of each order including promo codes and the address of the order 
