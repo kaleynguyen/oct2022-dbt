@@ -1,0 +1,29 @@
+version: 2
+
+models:
+#core
+  - name: dim_users
+    description: Full info about users including the corresponding addresses
+    columns: 
+      - name: user_id
+        tests:
+          - not_null
+          - unique
+    
+  - name: fact_products
+    description: transactional product info. 
+   
+  - name: fact_orders
+    description: Info about the transactional data of each order including promo codes and the address of the order 
+    columns:
+      - name: promo_status
+        tests:
+          - accepted_values:
+              values: ['active', 'inactive']
+      - name: order_status
+        tests:
+          - accepted_values:
+              values: ['delivered', 'shipped', 'preparing']
+    tests:
+      - unique:
+          column_name: "user_id || '-' || order_id"

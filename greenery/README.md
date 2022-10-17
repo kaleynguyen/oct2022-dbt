@@ -71,20 +71,20 @@ Modern data stacks: data ingestion, data warehouse, transformation and BI tools
 
 ### dbt fundamentals
 
-* seeds `dbt seed`: csv files that dbt uploads to the data warehouse as tables and do not change frequently. seeds can be an external infectious icd9/icd10 codes to flag incorrect prescription.
+* seeds `dbt seed`: csv files that dbt uploads to the data warehouse as tables and do not change frequently. seeds can be an external infectious icd9/icd10 codes to flag incorrect prescription or a mapping data dictionary of abbreviated states to full name states. Ideally it should be a 1-1 mapping but icd9/icd10 conversion does not follow the 1-1 mapping rule. 
 
 * sources `dbt source freshness`: raw data that I use to build dbt models off of. sources are defined in source.yml file
 
 * models `dbt run`: models are SQL select statements that are compiled, then run against the data warehouse, then materialized into tables or views. 
 
-1. table: a model that's created as a table
-2. view: a model that's created as a view
+1. table: a model that's created as a table. 
+2. view: a model that's created as a view. A view is just a snapshot of the database and is not materialized. 
 3. incremental (stay only for a short amount of time): `is_incremental()` in jinja
-4. ephemeral: like temp tables and **not** materialized. dbt builds them into the models that ref them as CTE.
+4. ephemeral: like temp tables in T-SQL and **not** materialized. dbt builds them into the models that ref them as CTE. 
 
  dbt model materialization can be defined in dbt_project.yml as the global materialized config. Each project can overide the dbt_project.yml in the source.yml (eg src_facebook_ads.yml). 
 
- * tests `dbt test`: test NULLness, uniqueness, positivivity or user defined test functions/udf.
+ * tests `dbt test`: test NULLness, uniqueness, positivivity or user defined test functions/udf. Snowflake can have Javacript udf but not so sure whether they have supported Python udf. 
  * snapshots `dbt snapshot` to easily capture data changes over time. Eg, number of invetory products or which dates of the trading pipelines have been processed until today. 
  * docs `dbt docs generate` and `dbt docs serve` to generate docs and visualize DAGs of models and metadata. 
  * Jinja + macros: macros are pieces of jinja code, like functions. Add the macro below into `macros/` directory. 
