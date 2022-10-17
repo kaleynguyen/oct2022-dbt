@@ -1,0 +1,6 @@
+#marketing
+version: 2
+
+models:
+  - name: fact_order_users
+    description: int model about the user and his/her order counts 
