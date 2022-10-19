@@ -42,7 +42,7 @@ models:
       - name: order_id
         tests:
           - not_null
-          #- unique supposed to be tested OK since order_id is the primary key
+          - unique #supposed to be tested OK since order_id is the primary key
   - name: stg_promos
     description: Info about each user's promos. 
     columns: 

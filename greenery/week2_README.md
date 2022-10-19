@@ -1,5 +1,5 @@
 
-#Part 1: Models
+# Part 1. Models
 
 ## 1. What is our user repeat rate?
 
@@ -59,4 +59,21 @@ All of the models in the core team uses an **order** as the grain of the busines
 - int_event_types: pivot event_type's levels to columns
 - fact_event_users: user + his/her first/last session + total event type (number of sessions/page-views/checkouts/add_to_cart/package_shipped) + total orders + number of orders + order to session/pageview ratio.
 - int_event_summary
+
+# Part 2. Tests
+## Reasons to test
+1. The SQL in your model doesn’t do what you intended.
+
+* The primary key is duplicated. This is highly unusual to happen given the greenary data since the primary key is defined in the CREATE statement.
+* A join results in all NULL values for a column is being added
+
+2. An assumption about the source data is wrong or the previously-true assumption is no longer true. 
+* non-unique or duplicate ID.
+* 1-many instead of 1-1
+* missing data 
+* NULLs when not expecting 
+
+I test "not null" and "unique" for all primary keys but the order_id of stg_order_items is not unique. The error log shows `Failure in test unique_stg_order_items_order_id (models/staging/postgres/_postgres__schema.yml)`
+
+# Part 3. dbt snapshot
 
