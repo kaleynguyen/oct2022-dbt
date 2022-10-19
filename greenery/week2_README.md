@@ -77,3 +77,21 @@ I test "not null" and "unique" for all primary keys but the order_id of stg_orde
 
 # Part 3. dbt snapshot
 
+I did not create a snapshot of last week to compare but this is the code to snapshot the type-2 slowly changing dimension (status column of the source orders table).
+
+```sql
+{% snapshot orders_snapshot %}
+
+  {{
+    config(
+      target_schema='dbt_nanangannguyen',
+      unique_key='order_id',
+      strategy='check',
+      check_cols=['status']
+    )
+  }}
+
+  SELECT * FROM {{source('greenery','orders')}}
+
+{% endsnapshot %}
+```
