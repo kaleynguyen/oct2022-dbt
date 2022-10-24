@@ -94,6 +94,51 @@ ORDER BY conversion_rate DESC;
 
 # Part 2: macro
 
-# Part 3: Post hook
+I tried to resize the warehouse based on the lecture but I do not have a sufficient privilege to do. 
+
+```sql
+{% macro warehouse_resize(prod_size, stage_size) %}
+
+  {% if target.name == "prod" %}
+  ALTER WAREHOUSE {{ target.warehouse }} SET WAREHOUSE_SIZE = {{ prod_size }};
+
+  {% else %}
+  ALTER WAREHOUSE {{ target.warehouse }} SET WAREHOUSE_SIZE = {{ stage_size }};
+
+  {% endif %}
+
+{% endmacro %}
+```
+
+# Part 3: Post hook (SQL that is run after a model, seed or snapshot)
+
+I use the macro to grant SELECT on the model to the role 'reporting' after each model is run. 
+
+```sql
+{% macro grant(role) %}
+  {% set sql %}
+      GRANT USAGE ON SCHEMA {{ schema }} TO ROLE {{ role }};
+      {% if role == "sysadmin" %}
+       GRANT SELECT, UPDATE, TRIGGER ON {{ this }} TO ROLE {{ role }};
+      {% else %} 
+        GRANT SELECT ON {{ this }} TO ROLE {{ role }};
+      {% endif %}
+    {% endset %}
+  {% set table = run_query(sql) %}
+{% endmacro %}
+```
 # Part 4: dbt package
+
+I installed dbt_utls, dbt_expectations and codegen package and used dbt_utils to spread the column event_type from long to wide.
+
+```sql
+{{ dbt_utils.pivot('event_type', dbt_utils.get_column_values(ref('stg_events'), 'event_type')) }}
+```
+ 
 # Part 5: dbt snapshots 
+
+These 3 packages are shipped:
+
+* '8385cfcd-2b3f-443a-a676-9756f7eb5404'
+* 'e24985f3-2fb3-456e-a1aa-aaf88f490d70'
+* '5741e351-3124-4de7-9dff-01a448e7dfd4'
