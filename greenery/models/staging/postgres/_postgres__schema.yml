@@ -29,6 +29,8 @@ models:
         tests:
           - not_null
           - unique
+ 
+          
   - name: stg_products
     description: Info about each user's products. 
     columns: 

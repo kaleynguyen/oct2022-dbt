@@ -1,8 +1,3 @@
-{{
-    config(
-        materialized="table"
-    )
-}}
 SELECT 
     o.order_id
     ,o.user_id

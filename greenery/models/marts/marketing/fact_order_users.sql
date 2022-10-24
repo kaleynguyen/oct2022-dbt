@@ -1,9 +1,3 @@
-{{
-    config(
-        materialized="table"
-    )
-}}
-
 WITH user_orders AS (
     SELECT 
     u.user_id
