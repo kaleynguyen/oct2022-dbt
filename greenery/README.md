@@ -110,9 +110,9 @@ Modern data stacks: data ingestion, data warehouse, transformation and BI tools
 
 2. stg: 1:1 with source or JOINING of base tables. Live in staging/staging_mysql/stg_mysql_order.sql
 
-3. int: heavier transformation with business logic applied. Should live in marts/finance/int_orders_groupby_month
+3. int: heavier transformation with business logic applied. Should live in marts/finance/int_orders_groupby_month. If a bipartite DAG with no int model between stg/dim or stg/fact exists, it suggests that an int model is needed.   
 
-4. dim or fact: end state and a good point to bring to BI tools
+4. dim or fact: end state and a good point to bring to BI tools through exposure. 
 
 > Marts contains step 3 and 4 models
 > Marts has their own custom schemas. In the dbt_project.yml we can define marts like this:
@@ -140,7 +140,7 @@ models:
         +schema: finance
 ```
 
-* Light transformation: type casting, renaming, filtering bad data, deleted records (CCPA compliant), same time zone 
+* Light transformation: type casting, renaming, filtering bad data, deleted records (CCPA in Cali / HIPPA compliant), specific time zone. 
 * Heavy transformation: usually in Marts, which are traditionally based on business entities and processes and grouped by business unit (operation, marketing, sales, finance) in a sub-directory within a directory of core transformed models (dim_users, fact_orders).
 * Dim (metadata): users, stores, products
 * Fact (transactional data): orders, events, transactions. **fact** LEFT JOIN on **dim**
@@ -154,10 +154,64 @@ models:
 3. Identify dimensions based on the grain
 4. Identify facts based on the grain 
 
-### Testing (row level, not database level? What about IC?)
+### Testing - only at row level with `dbt test`
+Testing is a negation of the true assumption. For example, if a test on uniqueness returns a row, the test fails and the assumption about the data is incorrect. In other words, if a test on uniqueness does not return a row, the test passes. It is recommended to always test 'not null' and 'unique'.
 
+* Singular test: `unique`, `not_null`, `accepted_values` and `relationships`. Suprisingly, Google Big Query does not offer ref integrity test and requires a different DW to test the relationship. 
 
+```yaml
+version: 2
 
+models:
+  - name: orders
+    columns:
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+      - name: status
+        tests:
+          - accepted_values:
+              values: ['placed', 'shipped', 'completed', 'returned']
+      - name: customer_id
+        tests:
+          - relationships:
+              to: ref('customers')
+              field: id #each customer_id in the orders model exists as an id in the customers table (also known as referential integrity)
+```
+* Generic Test: could use macro to parametrized the input 
+```yaml
+{% test positive_values(model, column_name) %}
+   select *
+   from {{ model }}
+   where {{ column_name }} < 0
+{% endtest %}
+```
+
+* Testing the source freshness by `dbt source freshness`
+```yaml
+
+version: 2
+
+sources:
+
+  - name: tutorial
+    schema: public
+    database: dbt
+    freshness:
+      warn_after: {count: 24, period: hour} #warn does not affect downstream models
+      error_after: {count: 48, period: hour} #error stops all the downstream models
+
+    tables:
+      - name: superheroes 
+        loaded_at_field: created_at
+        description: >
+          Contains demographic information about each superhero
+```
+
+# Week 3
+
+# Week 4
 
 
 
