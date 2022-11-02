@@ -71,7 +71,7 @@ Modern data stacks: data ingestion, data warehouse, transformation and BI tools
 
 ### dbt fundamentals
 
-* seeds `dbt seed`: csv files that dbt uploads to the data warehouse as tables and do not change frequently. seeds can be an external infectious icd9/icd10 codes to flag incorrect prescription or a mapping data dictionary of abbreviated states to full name states. Ideally it should be a 1-1 mapping but icd9/icd10 conversion does not follow the 1-1 mapping rule. 
+* seeds `dbt seed`: csv files that dbt uploads to the data warehouse as tables and do not change frequently. seeds can be an external infectious icd9/icd10 codes to flag potentially incorrect prescription or a mapping data dictionary of abbreviated states to full name states. Ideally it should be a 1-1 mapping but icd9/icd10 conversion does not follow the 1-1 mapping rule. 
 
 * sources `dbt source freshness`: raw data that I use to build dbt models off of. sources are defined in source.yml file
 
@@ -140,7 +140,7 @@ models:
         +schema: finance
 ```
 
-* Light transformation: type casting, renaming, filtering bad data, deleted records (CCPA in Cali / HIPPA compliant), specific time zone. 
+* Light transformation: type casting, renaming, filtering bad data, deleted records (CCPA in Cali / HIPPA compliant), specific time zone, and obfuscated data. 
 * Heavy transformation: usually in Marts, which are traditionally based on business entities and processes and grouped by business unit (operation, marketing, sales, finance) in a sub-directory within a directory of core transformed models (dim_users, fact_orders).
 * Dim (metadata): users, stores, products
 * Fact (transactional data): orders, events, transactions. **fact** LEFT JOIN on **dim**
@@ -213,8 +213,46 @@ sources:
 
 # Week 4
 
+### Product Funnel: 
+The product funnel is how user navigate through a page, with the ultimate goal of purchasing a product. The funnel steps in greenery will include:
 
+* The total site visits or the total sessions
+* Sessions with product pageview
+* Sessions with add-to-cart action: add-to-cart rate = $\frac{#uniq sessions with add to cart event}{#total uniq sessions}$
+* Sessions with transaction action: conversion rate = $\frac{#uniq sessions with checkout event}{#total uniq sessions}$
 
+The whole goal of modeling product funnel is to figure out **where** users are falling out with A/B tests. 
+
+* Availability: Identify the zipcodes of high number of sessions without any store on demand to identify the on-demand stores. As the number of on-demand stores become more available, the conversion rate also increases.
+* Hours: Determine impactful hours based on session traffic and other store availabilities in the same area. 
+* Capacity: Place a cap on stores to ensure the best user experince based on the number of fulfillments that a store can handle. 
+* Selection: Recommend item preferences across the country and popular locally to each store (Pareto principle)
+$\frac{percent of GMV of each store of last year}{each Designated market area}$
+* Price: Price variance and price index play a significant role. 
+
+### dbt exposures
+Exposures are purely documentation. They help you and your team know what downstream systems or processes will be affected by changes to models that feed into an exposure. Think KPI definition changes, data science model inputs, etc.  However, exposures require the analyst to know which models that the exposures rely on by referencing the models. 
+
+```yaml
+version: 2
+exposures:  
+  - name: Product Funnel Dashboard
+    description: >
+      Models that are critical to our product funnel dashboard
+    type: dashboard
+    maturity: high
+    owner:
+      name: Emily Hawkins
+      email: emily@greenery.com
+    depends_on:
+      - ref('product_funnel')
+```
+
+# dbt artifacts / metadata 
+* run_results.json: dbt run, test, seed, snapshot, compile, docs generate, and build. Can use this metadata to understand how our production dbt run is performing on a day to day basis
+* manifest.json: dbt compile, run, test, seed, snapshot, docs generate, freshness, ls, and build. Some examples include how many models have descriptions, how many sources contain PII, and which macros are being used across our project.
+* sources.json: produced by `dbt source freshness`. This metadata is generally useful to understand how your freshness checks are performing on a day to day basis.
+* catalog.json: produced by `dbt docs generate`. This metadata provides information from your data warehouse on tables and views, such as row counts, table size, and column types. dbt uses this data to provide this metadata within the dbt docs site. We can use this to understand how table sizes grow over time. 
 
 
 

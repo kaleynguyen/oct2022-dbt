@@ -1,0 +1,11 @@
+version: 2
+exposures:
+  - name: Product Funnel Dashboard
+    description: Models that affect product funnel dashboard
+    type: dashboard
+    maturity: high
+    owner: 
+      name: Kaley Nguyen
+      email: knn@greenery.com
+    depends_on:
+      - ref('product_funnel')
