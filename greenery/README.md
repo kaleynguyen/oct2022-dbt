@@ -220,8 +220,8 @@ The product funnel is how user navigate through a page, with the ultimate goal o
 
 * The total site visits or the total sessions
 * Sessions with product pageview
-* Sessions with add-to-cart action: add-to-cart rate = $\frac{#uniq sessions with add to cart event}{#total uniq sessions}$
-* Sessions with transaction action: conversion rate = $\frac{#uniq sessions with checkout event}{#total uniq sessions}$
+* Sessions with add-to-cart action: add-to-cart rate = $\frac{num of uniq sessions with add to cart event}{num of total uniq sessions}$
+* Sessions with transaction action: conversion rate = $\frac{num of uniq sessions with checkout event}{num of total uniq sessions}$
 
 The whole goal of modeling product funnel is to figure out **where** users are falling out with A/B tests. 
 
